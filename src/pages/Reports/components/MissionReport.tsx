@@ -1,7 +1,12 @@
 
 import { Mission, MissionStatus } from '@/data/mockData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, PieChart } from '@/components/ui/chart';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from '@/components/ui/chart';
+import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 interface MissionReportProps {
   missions: Mission[];
@@ -9,13 +14,13 @@ interface MissionReportProps {
 
 export function MissionReport({ missions }: MissionReportProps) {
   // Calculate mission status distribution
-  const statusData = Object.values(MissionStatus).reduce((acc, status) => {
+  const statusData = Object.values(MissionStatus).reduce((acc: { name: string; value: number }[], status) => {
     const count = missions.filter(item => item.status === status).length;
     if (count > 0) {
       acc.push({ name: status.replace('-', ' '), value: count });
     }
     return acc;
-  }, [] as { name: string; value: number }[]);
+  }, []);
 
   // Calculate astronaut assignment counts
   const astronautData = missions.map(mission => ({
@@ -43,13 +48,37 @@ export function MissionReport({ missions }: MissionReportProps) {
             <CardDescription>Distribution of missions by status</CardDescription>
           </CardHeader>
           <CardContent className="h-80">
-            <PieChart
-              data={statusData}
-              dataKey="value"
-              nameKey="name"
-              colors={colors}
-              label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-            />
+            <ChartContainer 
+              className="h-full w-full" 
+              config={{
+                status1: { color: colors[0] },
+                status2: { color: colors[1] },
+                status3: { color: colors[2] },
+                status4: { color: colors[3] }
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    nameKey="name"
+                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                  >
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
         
@@ -59,12 +88,22 @@ export function MissionReport({ missions }: MissionReportProps) {
             <CardDescription>Number of astronauts per mission</CardDescription>
           </CardHeader>
           <CardContent className="h-80">
-            <BarChart
-              data={astronautData}
-              keys={['astronauts']}
-              indexBy="name"
-              colors={['#8884d8']}
-            />
+            <ChartContainer 
+              className="h-full w-full" 
+              config={{
+                astronauts: { color: colors[0] }
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={astronautData}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Bar dataKey="astronauts" fill={colors[0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
@@ -75,13 +114,26 @@ export function MissionReport({ missions }: MissionReportProps) {
           <CardDescription>Modules, cargo and crew by mission</CardDescription>
         </CardHeader>
         <CardContent className="h-80">
-          <BarChart
-            data={resourceData}
-            keys={['modules', 'cargo', 'crew']}
-            indexBy="name"
-            colors={colors}
-            stacked={true}
-          />
+          <ChartContainer 
+            className="h-full w-full" 
+            config={{
+              modules: { color: colors[0] },
+              cargo: { color: colors[1] },
+              crew: { color: colors[2] }
+            }}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={resourceData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip content={<ChartTooltipContent />} />
+                <Legend />
+                <Bar dataKey="modules" stackId="a" fill={colors[0]} />
+                <Bar dataKey="cargo" stackId="a" fill={colors[1]} />
+                <Bar dataKey="crew" stackId="a" fill={colors[2]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
         </CardContent>
       </Card>
     </div>
