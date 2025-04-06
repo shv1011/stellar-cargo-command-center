@@ -10,6 +10,11 @@ import { Layout } from "./components/layout/Layout";
 import { LoginPage } from "./pages/Auth/LoginPage";
 import { DashboardPage } from "./pages/Dashboard/DashboardPage";
 import { CargoPage } from "./pages/Cargo/CargoPage";
+import AstronautsPage from "./pages/Astronauts/AstronautsPage";
+import ModulesPage from "./pages/Modules/ModulesPage";
+import MissionsPage from "./pages/Missions/MissionsPage";
+import ReportsPage from "./pages/Reports/ReportsPage";
+import ActivityPage from "./pages/Activity/ActivityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,11 +57,11 @@ const AppRoutes = () => {
       }>
         <Route index element={<DashboardPage />} />
         <Route path="cargo" element={<CargoPage />} />
-        <Route path="astronauts" element={<div>Astronauts Page (Coming Soon)</div>} />
-        <Route path="modules" element={<div>Modules Page (Coming Soon)</div>} />
-        <Route path="missions" element={<div>Missions Page (Coming Soon)</div>} />
-        <Route path="reports" element={<div>Reports Page (Coming Soon)</div>} />
-        <Route path="activity" element={<div>Activity Page (Coming Soon)</div>} />
+        <Route path="astronauts" element={<AstronautsPage />} />
+        <Route path="modules" element={<ModulesPage />} />
+        <Route path="missions" element={<MissionsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="activity" element={<ActivityPage />} />
         <Route path="admin" element={<div>Admin Page (Coming Soon)</div>} />
         <Route path="settings" element={<div>Settings Page (Coming Soon)</div>} />
       </Route>
