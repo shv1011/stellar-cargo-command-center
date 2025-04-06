@@ -1,4 +1,4 @@
-# Welcome to your Freedom Shield project
+# Welcome to the Freedom Shield project
 
 ## How can I edit this code?
 
