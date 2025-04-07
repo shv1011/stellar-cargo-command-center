@@ -1,6 +1,11 @@
+# Build stage with Ubuntu base image
+FROM ubuntu:22.04 as build
 
-# Use Node.js as the base image
-FROM node:18-alpine as build
+# Install Node.js and npm
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
 # Set working directory
 WORKDIR /app
@@ -17,14 +22,20 @@ COPY . .
 # Build the app
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Production stage with nginx on Ubuntu
+FROM ubuntu:22.04
+
+# Install nginx
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy built assets from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /var/www/html
 
 # Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/sites-available/default
 
 # Expose port 80
 EXPOSE 80
